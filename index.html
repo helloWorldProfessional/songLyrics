@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="shortcut icon" href="logo.ico" />
+  <title>Lyrics</title>
+
+</head>
+
+<body>
+
+  <h1 class="top-title">Search for lyrics</h1>
+  <div class="top">
+    <div class="search-bar">
+      <div class="search-label">
+        <label>Artist</label>
+        <input type="text" id="artist" class="search-box" />
+      </div>
+      <div class="search-label">
+        <label>Song</label>
+        <input type="text" id="song" class="search-box" />
+      </div>
+      <div class="search-btn">
+        <button type="button" id="btn" onclick="pageLoad();showSection();">Search</button>
+      </div>
+    </div>
+  </div>
+  <script lang="javascript">
+    function pageLoad() {
+      var artist = document.getElementById("artist").value;
+      var song = document.getElementById("song").value;
+     var HttpClient = function () {
+        this.get = function (aUrl, aCallback) {
+          var anHttpRequest = new XMLHttpRequest();
+          anHttpRequest.onreadystatechange = function () {
+            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+              aCallback(anHttpRequest.responseText);
+          }
+          anHttpRequest.open("GET", aUrl, true);
+          anHttpRequest.send(null);
+        }
+      } 
+      if (artist === null || artist === ''|| song===null || song==='') {
+        alert("Popunite sva polja prije pretrage!");
+      }
+      else {
+        var theurl = 'https://api.lyrics.ovh/v1/' + artist + '/' + song;
+        var client = new HttpClient();
+        client.get(theurl, function (response) {
+          var response1 = JSON.parse(response);
+          // alert(response);
+          document.getElementById("lyrics").innerHTML = response1.lyrics.replace(/\n/g, "<br>");
+        });
+
+        var theurl = 'https://www.theaudiodb.com/api/v1/json/1/search.php?s=' + artist;
+        var client = new HttpClient();
+        client.get(theurl, function (response) {
+          var response1 = JSON.parse(response);
+          
+          // alert(response);
+          document.getElementById("strStyle").innerHTML = response1.artists[0].strStyle;
+          document.getElementById("strGenre").innerHTML = response1.artists[0].strGenre;
+          document.getElementById("strLabel").innerHTML = response1.artists[0].strLabel;
+          document.getElementById("strBiographyEN").innerHTML = response1.artists[0].strBiographyEN.replace(/\n/g, "<br>");
+          document.getElementById("strWebsite").innerHTML = response1.artists[0].strWebsite;
+          document.getElementById("strFacebook").innerHTML = response1.artists[0].strFacebook;
+          document.getElementById("strTwitter").innerHTML = response1.artists[0].strTwitter;
+          document.getElementById("strArtistThumb").src = response1.artists[0].strArtistThumb;
+
+        })
+        document.getElementById('reveal').style.display = "block";
+      };
+
+    }
+    /* function showSection() {
+      document.getElementById('reveal').style.display = "block";
+    } */
+  </script>
+  <section id="reveal" style="display: none;">
+    <div class="smInfo">
+      <div class="info">
+        <p class="search-label">Style:</p>
+        <div id="strStyle"></div>
+      </div>
+      <div class="social-media">
+        <p class="search-label">Genre:</p>
+        <div id="strGenre"></div>
+      </div>
+      <div class="social-media">
+        <p class="search-label">Label:</p>
+        <div id="strLabel"></div>
+      </div>
+
+    </div>
+    <div class="lyrics-load">
+      <i class="fa fa-music fa-3x"></i>
+      <div id="lyrics"></div>
+    </div>
+
+    <div class="smInfo">
+      
+      <div class="social-media">
+        <i class="fa fa-globe fa-3x"></i>
+        <div id="strWebsite"></div>
+
+      </div>
+      <div class="social-media">
+        <i class="fa fa-facebook fa-3x"></i>
+        <div id="strFacebook"></div>
+      </div>
+      <div class="social-media">
+        <i class="fa fa-twitter fa-3x"></i>
+        <div id="strTwitter"></div>
+      </div>
+
+    </div>
+    <div class="bio">
+      <i class="fa fa-user-circle fa-3x"></i>
+      <div class="thumbnail">
+        <img src="" id="strArtistThumb" alt="ArtistThumbnail">
+      </div>
+      <div id="strBiographyEN"></div>
+    </div>
+    <footer>
+      <div class="footer">
+        <p>Skript jezici i programiranje 2020</p>
+      </div>
+    </footer>
+  </section>
+</body>
+
+</html>
